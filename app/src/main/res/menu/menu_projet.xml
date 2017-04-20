@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_edit"
+        android:title="Editer le projet"
+        android:visible="true"
+        android:orderInCategory="100"/>
+
+    <item
+        android:id="@+id/action_member"
+        android:title="Ajouter un membre"
+        android:visible="true"
+        android:orderInCategory="100"/>
+
+    <item
+        android:id="@+id/action_photo"
+        android:title="Changer la photo"
+        android:visible="true"
+        android:orderInCategory="100"/>
+
+</menu>

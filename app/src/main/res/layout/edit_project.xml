@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.beacon.projectdetect.Activity.EditProjectActivity"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Beacon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/projectNameEdit"
+                android:layout_alignParentTop="true"
+                android:layout_alignStart="@+id/projectNameEdit"
+                android:gravity="center_vertical"
+                android:text="Identifiant du Beacon" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/border_space_min"
+            android:layout_marginEnd="@dimen/border_space"
+            android:layout_marginStart="@dimen/border_space"
+            android:layout_marginTop="@dimen/border_space_min"
+            android:orientation="vertical"
+            android:padding="@dimen/border_space_min">
+
+            <EditText
+                android:id="@+id/beaconIdentifierEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/Beacon"
+                android:layout_alignStart="@+id/Beacon"
+                android:layout_below="@+id/Beacon"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="Identifiant Beacon"
+                android:inputType="textPersonName" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/ProjectName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/beaconIdentifierEdit"
+                android:layout_alignStart="@+id/beaconIdentifierEdit"
+                android:layout_below="@+id/beaconIdentifierEdit"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical"
+                android:text="Nom du projet"
+                android:textSize="@dimen/text_title" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/border_space_min"
+            android:layout_marginEnd="@dimen/border_space"
+            android:layout_marginStart="@dimen/border_space"
+            android:layout_marginTop="@dimen/border_space_min"
+            android:orientation="vertical"
+            android:padding="@dimen/border_space_min">
+
+            <EditText
+                android:id="@+id/projectNameEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/ProjectName"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="Nom du projet"
+                android:inputType="textPersonName" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/Description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignLeft="@+id/projectNameEdit"
+                android:layout_alignStart="@+id/projectNameEdit"
+                android:layout_below="@+id/projectNameEdit"
+                android:layout_marginTop="10dp"
+                android:text="Description" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/border_space_min"
+            android:layout_marginEnd="@dimen/border_space"
+            android:layout_marginStart="@dimen/border_space"
+            android:layout_marginTop="@dimen/border_space_min"
+            android:orientation="vertical"
+            android:padding="@dimen/border_space_min">
+
+            <EditText
+                android:id="@+id/descriptionEdit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignEnd="@+id/projectNameEdit"
+                android:layout_alignRight="@+id/projectNameEdit"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="8dp"
+                android:ems="10"
+                android:hint="Description"
+                android:inputType="textMultiLine" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="15dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/save"
+                style="@style/Widget.AppCompat.Button.Colored"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Enregistrer" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</ScrollView>

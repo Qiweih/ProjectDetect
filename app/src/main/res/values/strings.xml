@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">ProjectDetect</string>
+    <string name="project_title">Nom du projet</string>
+    <string name="description">Description</string>
+</resources>
