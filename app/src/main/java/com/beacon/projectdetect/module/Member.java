@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by qiwhuang on 4/6/2017.
  */
-
+// Member of a project
 public class Member {
     private String id;
     private String name;

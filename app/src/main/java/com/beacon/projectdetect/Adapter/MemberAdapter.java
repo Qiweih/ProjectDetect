@@ -27,6 +27,7 @@ import java.util.List;
  */
 
 public class MemberAdapter extends BaseAdapter {
+
     private Context context;
     private List<Member> members;
     private String projectId;
@@ -34,6 +35,7 @@ public class MemberAdapter extends BaseAdapter {
     private FirebaseManager firebaseManager;
     private String beaconName;
 
+    // Constructor of the list of member in project page
     public MemberAdapter(Context context, List<Member> members, String projectId, String beaconDataId, FirebaseManager firebaseManager, String beaconName){
         this.context = context;
         this.members = members;
@@ -43,6 +45,7 @@ public class MemberAdapter extends BaseAdapter {
         this.beaconName = beaconName;
     }
 
+    // Define the viewholder in order to configure the button related
     static class ViewHolder {
         RelativeLayout container;
         TextView memberName;
@@ -77,8 +80,10 @@ public class MemberAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_member, null);
 
             final ViewHolder holder = new ViewHolder();
+            // Define the variable of holder
             holder.container = (RelativeLayout) convertView
                     .findViewById(R.id.container);
+            // Define the gesture detector with the class mygesturelistener
             holder.mDetector = new GestureDetectorCompat(context,
                     new MyGestureListener(context, convertView));
             holder.memberName = (TextView) convertView.findViewById(R.id.member_name);
@@ -98,7 +103,7 @@ public class MemberAdapter extends BaseAdapter {
                 return true;
             }
         });
-
+        // Listener of the delete button
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +129,7 @@ public class MemberAdapter extends BaseAdapter {
                 alertDialog.show();
             }
         });
-
+        // Listener of the edit button
         holder.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

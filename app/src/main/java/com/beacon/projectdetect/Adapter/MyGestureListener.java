@@ -30,6 +30,7 @@ public class MyGestureListener extends SimpleOnGestureListener {
         inFromLeft = AnimationUtils.loadAnimation(ctx, R.anim.in_from_left);
     }
 
+    // Detect if we are scrolling left or right
     @Override
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
                            float distanceY) {

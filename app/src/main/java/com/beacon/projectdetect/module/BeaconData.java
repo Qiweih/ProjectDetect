@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by qiwhuang on 4/5/2017.
  */
-
+// Data that a beacon contain (list of project and his identifier)
 public class BeaconData {
     private String uid;
     private String beaconIdentifier;

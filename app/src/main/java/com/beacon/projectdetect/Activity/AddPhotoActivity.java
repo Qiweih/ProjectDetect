@@ -59,20 +59,28 @@ public class AddPhotoActivity extends AppCompatActivity {
         beaconIdentifier = getIntent().getStringExtra("beaconIdentifierEdit");
         projectIdentifier = getIntent().getStringExtra("projectId");
         beaconUid = getIntent().getStringExtra("beaconUid");
+
+        // Select the image
         selectImage();
+
+        // Listener of save button
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 save.setEnabled(false);
+                // get the directory of the project external storage
                 File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
                 OutputStream os = null;
                 try {
+                    // Creata a new file in the directory
                     File file = new File(dir, beaconIdentifier + ".png");
                     os = new FileOutputStream(file);
                     bm.compress(Bitmap.CompressFormat.PNG, 100, os);
                     bm.recycle();
                     filePath = file.getPath();
                     finalFile = Uri.fromFile(file);
+
+                    // Upload image to firebase Storage
                     UploadTask uploadTask = FirebaseManager.getInstance().getFirebaseStorage().getReference().child("BeaconData")
                             .child(beaconUid).child("ProjectPlug").child(projectIdentifier).child( beaconIdentifier + ".png")
                             .putFile(finalFile,new StorageMetadata.Builder()
@@ -98,13 +106,14 @@ public class AddPhotoActivity extends AppCompatActivity {
                     }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Handle successful uploads on complete
+                            // If success, switch to Mainactivity
                             Toast.makeText(AddPhotoActivity.this, "Upload complet", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(AddPhotoActivity.this,MainActivity.class);
                             intent.putExtra("changePhoto", true);
                             startActivity(intent);
                         }
                     });
+
                 } catch(IOException e) {
                     bm.recycle();
                     Log.e("combineImages", "problem combining images", e);
@@ -113,6 +122,7 @@ public class AddPhotoActivity extends AppCompatActivity {
         });
     }
 
+    // Select the image in gallery
     private void selectImage() {
         final CharSequence[] items = { "Choisir dans les photos",
                 "Annuler" };
@@ -127,7 +137,7 @@ public class AddPhotoActivity extends AppCompatActivity {
                     if(result)
                         galleryIntent();
                 } else if (items[item].equals("Annuler")) {
-                    dialog.dismiss();
+                    onBackPressed();
                 }
             }
         });
@@ -151,7 +161,7 @@ public class AddPhotoActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressWarnings("deprecation")
+    // Select photo in gallery
     private void onSelectFromGalleryResult(Intent data) {
         if (data != null) {
             try {
@@ -164,6 +174,7 @@ public class AddPhotoActivity extends AppCompatActivity {
         ivImage.setImageBitmap(bm);
     }
 
+    // Resize the Bitmap in order to have an icon size
     public Bitmap getResizedBitmap(Bitmap bm, int newWidth, int newHeight) {
         int width = bm.getWidth();
         int height = bm.getHeight();
@@ -175,5 +186,12 @@ public class AddPhotoActivity extends AppCompatActivity {
                 bm, 0, 0, width, height, matrix, false);
         bm.recycle();
         return resizedBitmap;
+    }
+
+    @Override
+    public void onBackPressed(){
+        Intent intent = new Intent(this, ProjectPlugActivity.class);
+        intent.putExtra("beaconId", beaconIdentifier);
+        startActivity(intent);
     }
 }

@@ -14,6 +14,8 @@ import android.support.v4.content.ContextCompat;
 /**
  * Created by qiwhuang on 4/19/2017.
  */
+
+// Set the permission to write and read in phone storage
 public class Utility {
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

@@ -1,12 +1,10 @@
 package com.beacon.projectdetect.Activity;
 
-import android.app.Application;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,7 +15,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.beacon.projectdetect.Adapter.ProjectRecycleView;
-import com.beacon.projectdetect.Adapter.TypeManager;
 import com.beacon.projectdetect.R;
 import com.beacon.projectdetect.Service.AppServices;
 import com.beacon.projectdetect.Service.Callback;
@@ -47,24 +44,21 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        /*
-        Gimbal.setApiKey(getApplication(),"90ef3b9f-a6c3-4740-b494-e809fd96b8bf");
-        Gimbal.start();
-        */
-        Application application = new Application();
-        TypeManager.createInstance(application );
 
         // Firebase configuration
         FirebaseManager.createInstance(this);
         firebaseManager = FirebaseManager.getInstance();
         firebaseManager.retrieveUser();
         firebaseManager.signInAnonymously(this);
+        firebaseManager.addAuthStateListener();
+        firebaseManager.retrieveBeaconData();
 
+        //Define the broadcast in order to switch to the page of project that correspond to the beacon
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("receiver"));
+
+        // If the photo changed, we refresh the list
         changePhoto = getIntent().getBooleanExtra("changePhoto", false);
 
-        PowerManager mgr = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = mgr.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
-        wakeLock.acquire();
 
         // Receiver of service broadcast
         receiver = new BroadcastReceiver() {
@@ -77,43 +71,6 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
                 }
             }
         };
-        firebaseManager.addAuthStateListener();
-        firebaseManager.retrieveBeaconData();
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("receiver"));
-        /*
-        communicationListener = new CommunicationListener() {
-            @Override
-            public Collection<Communication> presentNotificationForCommunications(Collection<Communication> collection, Visit visit) {
-                Log.d(TAG,"notif");
-                return super.presentNotificationForCommunications(collection, visit);
-            }
-
-            @Override
-            public Collection<Communication> presentNotificationForCommunications(Collection<Communication> collection, Push push) {
-                Log.d(TAG,"notif");
-                return super.presentNotificationForCommunications(collection, push);
-            }
-
-            @Override
-            public void onNotificationClicked(List<Communication> list) {
-                super.onNotificationClicked(list);
-                Log.d(TAG,"notif");
-            }
-
-            @Override
-            public Notification.Builder prepareCommunicationForDisplay(Communication communication, Visit visit, int i) {
-                Log.d(TAG,"notif");
-                return super.prepareCommunicationForDisplay(communication, visit, i);
-            }
-
-            @Override
-            public Notification.Builder prepareCommunicationForDisplay(Communication communication, Push push, int i) {
-                Log.d(TAG,"notif");
-                return super.prepareCommunicationForDisplay(communication, push, i);
-            }
-        };
-        CommunicationManager.getInstance().addListener(communicationListener);
-        */
     }
 
     @Override
@@ -147,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
     // When finish retrieve beaconData
     @Override
     public void callback() {
+        // Create the list
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view_main_activity);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -155,78 +113,11 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
         adapter = new ProjectRecycleView(listBeacon, this, changePhoto);
         recyclerView.setAdapter(adapter);
 
+        // put element in the list
         for (BeaconData beaconData : firebaseManager.dataBeacons){
             listBeacon.add(beaconData);
             adapter.notifyItemInserted(listBeacon.indexOf(beaconData));
         }
-        /*
-        placeEventListener = new PlaceEventListener() {
-            @Override
-            public void onVisitStart(Visit visit) {
-                super.onVisitStart(visit);
-                Log.d(TAG, "Visit started");
-            }
-
-            @Override
-            public void onVisitEnd(Visit visit) {
-                for (User user : firebaseManager.users){
-                    if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())){
-                        for (Beacon beacon : user.getBeacons()){
-                            if (beacon.getVisitId().equals(visit.getVisitID())){
-                                beacon.setActive(false);
-                                beacon.setDepartureTime(visit.getDepartureTimeInMillis());
-                                beacon.setDwellTime(visit.getDwellTimeInMillis());
-                            }
-                        }
-                    }
-                }
-                SplashActivity.BeaconId = "";
-                super.onVisitEnd(visit);
-            }
-
-            @Override
-            public void onBeaconSighting(BeaconSighting beaconSighting, List<Visit> list) {
-                super.onBeaconSighting(beaconSighting, list);
-                if (getIntent().getStringExtra("beaconId") != null){
-                    SplashActivity.BeaconId = getIntent().getStringExtra("beaconId");
-                }
-                if (!SplashActivity.BeaconId.equals(beaconSighting.getBeacon().getIdentifier())){
-                    if(beaconSighting.getRSSI() > -55){
-                        for (User user : firebaseManager.users) {
-                            if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())) {
-                                for (Beacon beacon : user.getBeacons()){
-                                    for (Visit visit : list){
-                                        if (beacon.getVisitId().equals(visit.getVisitID())){
-                                            if(beacon.isActive()){
-                                                isNewBeacon = false;
-                                            }
-                                        }
-                                    }
-                                }
-                                if (isNewBeacon){
-                                    Beacon beacon = new Beacon();
-                                    beacon.setUid(firebaseManager.createNewBeaconId(user));
-                                    beacon.setActive(true);
-                                    for (Visit visit : list){
-                                        if (visit.getPlace().getName().equals(beaconSighting.getBeacon().getName())){
-                                            beacon.setVisitId(visit.getVisitID());
-                                        }
-                                    }
-                                    user.getBeacons().add(beacon);
-                                    Map<String,Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons());
-                                    firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
-                                }
-                            }
-                        }
-                        SplashActivity.BeaconId = beaconSighting.getBeacon().getIdentifier();
-                        Intent intent = new Intent(MainActivity.this, ProjectPlugActivity.class);
-                        startActivity(intent);
-                    }
-                }
-            }
-        };
-        PlaceManager.getInstance().addListener(placeEventListener);
-        */
     }
 
     // Finish retrieve users

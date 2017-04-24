@@ -47,6 +47,7 @@ public class EditProjectActivity extends AppCompatActivity{
         save = (Button) findViewById(R.id.save);
         New = getIntent().getBooleanExtra("New", true);
 
+        // If it's a old project, we set the layout text and get information that we need
         if(!New){
             beaconIdentifier =  getIntent().getStringExtra("beaconIdentifierEdit");
             beaconIdentifierEdit.setText(beaconIdentifier);
@@ -57,6 +58,7 @@ public class EditProjectActivity extends AppCompatActivity{
             descriptionEdit.setText(projectDescription);
         }
 
+        // Listener for the save button
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

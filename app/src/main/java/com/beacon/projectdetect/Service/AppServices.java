@@ -1,14 +1,20 @@
 package com.beacon.projectdetect.Service;
 
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.beacon.projectdetect.Activity.MainActivity;
 import com.beacon.projectdetect.Activity.SplashActivity;
+import com.beacon.projectdetect.R;
 import com.beacon.projectdetect.module.Beacon;
 import com.beacon.projectdetect.module.User;
 import com.gimbal.android.BeaconSighting;
@@ -29,6 +35,7 @@ import java.util.Map;
  * Created by qiwhuang on 4/14/2017.
  */
 
+// Service that scan for beacons in background
 public class AppServices extends Service {
 
     private PlaceEventListener placeEventListener;
@@ -37,11 +44,31 @@ public class AppServices extends Service {
     private LocalBroadcastManager broadcaster;
     private String result = "receiver";
     private FirebaseManager firebaseManager;
+    private PowerManager pw;
+    private PowerManager.WakeLock wl;
 
     @Override
     public void onCreate(){
+        // Define the service in foreground in order to not killed it when we switch to home and lock the screen
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Notification notification = new NotificationCompat.Builder(this)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("ProjectDetect")
+                .setContentText("Scan for beacons")
+                .setContentIntent(pendingIntent).build();
+        startForeground(1337, notification);
+
         firebaseManager = FirebaseManager.getInstance();
         broadcaster = LocalBroadcastManager.getInstance(this);
+        // Allow the lock of screen
+        pw = (PowerManager)getApplicationContext().getSystemService(Context.POWER_SERVICE);
+        wl = pw.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyWakeLock");
+        wl.acquire();
+        // Setup Gimbal
         Gimbal.setApiKey(this.getApplication(),"90ef3b9f-a6c3-4740-b494-e809fd96b8bf");
         Gimbal.registerForPush("172261695721");
         setupGimbalPlaceManager();
@@ -50,6 +77,7 @@ public class AppServices extends Service {
     }
 
     private void setupGimabalCommunicationManager() {
+        // Listener for communication which create notification
         communicationListener = new CommunicationListener() {
             @Override
             public Collection<Communication> presentNotificationForCommunications(Collection<Communication> collection, Visit visit) {
@@ -82,9 +110,11 @@ public class AppServices extends Service {
     }
 
     private void setupGimbalPlaceManager() {
+        // Listener for Beacons
         placeEventListener = new PlaceEventListener() {
             @Override
             public void onVisitEnd(Visit visit) {
+                // If the visit is finished, we set the visit to false on firebase
                 for (User user : firebaseManager.users){
                     if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())){
                         for (Beacon beacon : user.getBeacons()){
@@ -92,13 +122,13 @@ public class AppServices extends Service {
                                 beacon.setActive(false);
                                 beacon.setDepartureTime(visit.getDepartureTimeInMillis());
                                 beacon.setDwellTime(visit.getDwellTimeInMillis());
-
                                 Map<String, Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons());
                                 firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
                             }
                         }
                     }
                 }
+                // Set the beacon id (static variable) to "" in order to allow automatic switch to project
                 SplashActivity.BeaconId = "";
                 super.onVisitEnd(visit);
             }
@@ -106,9 +136,9 @@ public class AppServices extends Service {
             @Override
             public void onBeaconSighting(BeaconSighting beaconSighting, List<Visit> list) {
                 super.onBeaconSighting(beaconSighting, list);
-
+                // If the sighting that we detect is not the same beacon that before, we execute the code below
                 if (!SplashActivity.BeaconId.equals(beaconSighting.getBeacon().getIdentifier())){
-                    if(beaconSighting.getRSSI() > -55){
+                        // we check if the visit is a new one, if yes, we create a new beacon and put it to firebase
                         for (User user : firebaseManager.users) {
                             if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())) {
                                 for (Beacon beacon : user.getBeacons()){
@@ -121,6 +151,11 @@ public class AppServices extends Service {
                                     }
                                 }
                                 if (isNewBeacon){
+                                    for (Beacon beacon :user.getBeacons()){
+                                        if(beacon.isActive()){
+                                            beacon.setActive(false);
+                                        }
+                                    }
                                     Beacon beacon = new Beacon();
                                     beacon.setUid(firebaseManager.createNewBeaconId(user));
                                     beacon.setActive(true);
@@ -136,13 +171,14 @@ public class AppServices extends Service {
                                 }
                             }
                         }
+                        // We set the beacon id to the beacon id that we detect
                         SplashActivity.BeaconId = beaconSighting.getBeacon().getIdentifier();
+                        // We switch to the project plug
                         Intent intent = new Intent(result);
                         intent.putExtra("Message", "changeView");
                         broadcaster.sendBroadcast(intent);
                     }
                 }
-            }
         };
         PlaceManager.getInstance().addListener(placeEventListener);
     }
@@ -155,7 +191,6 @@ public class AppServices extends Service {
 
     @Override
     public void onDestroy(){
-        PlaceManager.getInstance().removeListener(placeEventListener);
         super.onDestroy();
     }
 

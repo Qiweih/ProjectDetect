@@ -8,7 +8,7 @@ import java.util.Set;
 /**
  * Created by qiwhuang on 4/18/2017.
  */
-
+// User which connect to the application
 public class User {
     private String Uid;
     private String idUser;

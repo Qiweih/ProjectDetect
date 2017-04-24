@@ -46,9 +46,11 @@ public class FirebaseManager {
     private boolean isNewUser = true;
 
     public FirebaseManager(final Callback callback) {
+
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         firebaseStorage = FirebaseStorage.getInstance();
+        // set a new listener for auth
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -69,6 +71,7 @@ public class FirebaseManager {
         return firebaseAuth.getCurrentUser();
     }
 
+    // Sign in anonymously with firebase
     public void signInAnonymously(final Activity activity){
         firebaseAuth.signInAnonymously()
                 .addOnCompleteListener(activity, new OnCompleteListener<AuthResult>() {
@@ -84,10 +87,6 @@ public class FirebaseManager {
                 });
     }
 
-    public void setCallback(Callback callback) {
-        this.callback = callback;
-    }
-
     public void addAuthStateListener (){
         firebaseAuth.addAuthStateListener(mAuthListener);
     }
@@ -98,10 +97,12 @@ public class FirebaseManager {
         }
     }
 
+    // Retrieve Beacon Data on Firebase
     public void retrieveBeaconData(){
         firebaseDatabase.getReference().child("BeaconData").addListenerForSingleValueEvent(new OnBeaconDataRetrieved());
     }
 
+    // Retrieve User Data on Firebase
     public void retrieveUser(){
         firebaseDatabase.getReference().child("User").addListenerForSingleValueEvent(new OnUserDataRetrieved());
     }
@@ -114,10 +115,6 @@ public class FirebaseManager {
         return instance;
     }
 
-    public FirebaseAuth getFirebaseAuth() {
-        return firebaseAuth;
-    }
-
     public FirebaseStorage getFirebaseStorage() {
         return firebaseStorage;
     }
@@ -126,34 +123,40 @@ public class FirebaseManager {
         return firebaseDatabase;
     }
 
+    // Create a new user key on Firebase
     public String createNewUserId() {
         String uid = firebaseDatabase.getReference().child("User").push().getKey();
         return uid;
     }
 
+    // Create a new Beacon key on Firebase
     public String createNewBeaconId(User user){
         String uid = firebaseDatabase.getReference().child("User").child(user.getUid()).child("history").push().getKey();
         return uid;
     }
 
+    // Create a new BeaconData key on Firebase
     public String createNewBeaconDataId(BeaconData beaconData) {
         String uid = firebaseDatabase.getReference().child("BeaconData").push().getKey();
         beaconData.setUid(uid);
         return uid;
     }
 
+    // Create a new Member key on Firebase
     public String createNewMemberId(ProjectPlug projectPlug, BeaconData beaconData, Member member){
         String uid = firebaseDatabase.getReference().child("BeaconData").child(beaconData.getUid()).child("ProjectPlug").child(projectPlug.getProjectId()).child("member").push().getKey();
         member.setId(uid);
         return uid;
     }
 
+    // Create a new Project key on Firebase
     public String createNewProjectPlugId(BeaconData beaconData, ProjectPlug projectPlug){
         String uid = firebaseDatabase.getReference().child("BeaconData").child(beaconData.getUid()).child("ProjectPlug").push().getKey();
         projectPlug.setProjectId(uid);
         return uid;
     }
 
+    // Set the map to update or create a new member on Firebase
     public Map<String,Object> getMapUpdateMember(BeaconData beaconData, ProjectPlug projectPlug, Set<Member> members ){
             Map<String, Object> result = new HashMap<>();
             String baseKey = "BeaconData/" + beaconData.getUid() + "/ProjectPlug/" + projectPlug.getProjectId() + "/member/";
@@ -167,6 +170,7 @@ public class FirebaseManager {
         return result;
     }
 
+    // Set the map to update or create a new Project on Firebase
     public Map<String, Object> getMapUpdateProject(BeaconData beaconData, Set<ProjectPlug> projectPlugs){
             Map<String, Object> result = new HashMap<>();
             String baseKey = "BeaconData/" + beaconData.getUid() + "/ProjectPlug/";
@@ -180,6 +184,7 @@ public class FirebaseManager {
             return result;
     }
 
+    // Set the map to update or create a new BeaconData on Firebase
     public Map<String, Object> getMapUpdateBeacon(Set<BeaconData> beaconDatas){
         Map<String, Object> result = new HashMap<>();
 
@@ -192,6 +197,7 @@ public class FirebaseManager {
         return result;
     }
 
+    // Set the map to update or create a new User on Firebase
     public Map<String, Object> getMapUpdateUser(Set<User> users){
         Map<String, Object> result = new HashMap<>();
 
@@ -204,6 +210,7 @@ public class FirebaseManager {
         return result;
     }
 
+    // Set the map to update or create a new history on Firebase
     public Map<String, Object> getMapUpdateBeaconHistory(User user, Set<Beacon> beacons){
         Map<String, Object> result = new HashMap<>();
 
@@ -219,6 +226,7 @@ public class FirebaseManager {
         }
         return result;
     }
+
 
     private class OnBeaconDataRetrieved implements ValueEventListener{
 
@@ -271,71 +279,4 @@ public class FirebaseManager {
 
         }
     }
-
-
-    /*
-    private class OnProjectDataRetrieved implements ValueEventListener{
-
-        private String beaconId;
-
-        public OnProjectDataRetrieved(String beaconId){
-            this.beaconId = beaconId;
-        }
-
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            Iterable<DataSnapshot> dataSnapshotsProject = dataSnapshot.getChildren();
-            if (dataSnapshotsProject != null) {
-                for (DataSnapshot projectDataSnapshots : dataSnapshotsProject) {
-                    ProjectPlug data = new ProjectPlug(projectDataSnapshots);
-                    projectPlugs.add(data);
-                    dataSnapshot.getRef().child(data.getProjectId()).child("member").addValueEventListener(new OnMemberDataRetrieved(data.getProjectId()));
-                }
-                for(BeaconData beaconData: dataBeacons){
-                    if(beaconData.getUid() == beaconId){
-                        beaconData.setProjectPlugs(projectPlugs);
-                    }
-                }
-
-            }
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    }
-
-    private class OnMemberDataRetrieved implements ValueEventListener{
-
-        private String projectId;
-
-        public OnMemberDataRetrieved(String projectId){
-            this.projectId = projectId;
-        }
-
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            Iterable<DataSnapshot> dataSnapshotsMember = dataSnapshot.getChildren();
-            if (dataSnapshotsMember != null) {
-                for (DataSnapshot memberDataSnapshots : dataSnapshotsMember) {
-                    Member data = new Member(memberDataSnapshots);
-                    members.add(data);
-                }
-                for(ProjectPlug projectPlug : projectPlugs){
-                    if (projectPlug.getProjectId() == projectId){
-                        projectPlug.setMembers(members);
-                    }
-                }
-                callback.callback();
-
-            }
-        }
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-
-        }
-    }
-*/
-
-
 }

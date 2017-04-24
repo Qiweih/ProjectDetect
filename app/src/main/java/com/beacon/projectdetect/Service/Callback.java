@@ -5,6 +5,7 @@ package com.beacon.projectdetect.Service;
  */
 
 public interface Callback {
+    // Callback for retrieve beacon data and user data
     public void callback();
     public void callbackUser();
 }

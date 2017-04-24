@@ -6,6 +6,7 @@ import com.google.firebase.database.DataSnapshot;
  * Created by qiwhuang on 4/18/2017.
  */
 
+// Define a beacon in user
 public class Beacon {
 
     private String uid;

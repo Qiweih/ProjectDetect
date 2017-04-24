@@ -55,6 +55,7 @@ public class ProjectRecycleView extends RecyclerView.Adapter<ProjectRecycleView.
                 holder.textProjectName.setText(String.valueOf(projectPlug.getProjectName()));
                 if(!projectPlug.getImageName().equals("")){
                     StorageReference storageReference = FirebaseManager.getInstance().getFirebaseStorage().getReference().child("BeaconData").child(holder.beaconData.getUid()).child("ProjectPlug").child(projectPlug.getProjectId()).child(projectPlug.getImageName());
+                    // Detect if we need to refresh the image
                     if(changePhoto)
                         Glide.with(holder.view.getContext())
                                 .using(new FirebaseImageLoader())
@@ -89,8 +90,9 @@ public class ProjectRecycleView extends RecyclerView.Adapter<ProjectRecycleView.
         return beaconDataList.size();
     }
 
-
+    // View Holder
     class ViewHolder extends RecyclerView.ViewHolder {
+
         private final View view;
         private final TextView textProjectName;
         private final TextView textBeacon;
@@ -105,10 +107,6 @@ public class ProjectRecycleView extends RecyclerView.Adapter<ProjectRecycleView.
             textProjectName = (TextView) view.findViewById(R.id.project_item_name);
             textBeacon = (TextView) view.findViewById(R.id.project_item_beacon);
 
-            // Load Fonts
-            TypeManager typefaceManager = TypeManager.getInstance();
-            textProjectName.setTypeface(typefaceManager.getTypefaceRalewaySemibold());
-            textBeacon.setTypeface(typefaceManager.getTypefaceRalewayRegular());
         }
 
         @Override
@@ -117,6 +115,7 @@ public class ProjectRecycleView extends RecyclerView.Adapter<ProjectRecycleView.
         }
     }
 
+    // If we click on a element of the list
     public interface BeaconInteractionCallback {
         void onClickBeacon(BeaconData item);
     }

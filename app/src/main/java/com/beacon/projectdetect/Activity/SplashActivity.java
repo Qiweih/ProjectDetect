@@ -16,11 +16,13 @@ public class SplashActivity extends Activity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash);
+
+        //initialize  firebase
         FirebaseApp.initializeApp(this);
 
+        // Wait for 3 sec before start
         Thread timerThread = new Thread(){
             public void run(){
                 try{
@@ -64,7 +66,6 @@ public class SplashActivity extends Activity{
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
         super.onPause();
         finish();
     }
