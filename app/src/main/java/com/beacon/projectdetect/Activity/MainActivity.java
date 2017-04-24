@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
         firebaseManager.addAuthStateListener();
         firebaseManager.retrieveBeaconData();
 
-        //Define the broadcast in order to switch to the page of project that correspond to the beacon
-        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("receiver"));
-
         // If the photo changed, we refresh the list
         changePhoto = getIntent().getBooleanExtra("changePhoto", false);
 
@@ -71,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
                 }
             }
         };
+
+        //Define the broadcast in order to switch to the page of project that correspond to the beacon
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("receiver"));
     }
 
     @Override
