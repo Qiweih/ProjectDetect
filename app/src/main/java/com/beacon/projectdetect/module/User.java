@@ -10,13 +10,21 @@ import java.util.Set;
  */
 // User which connect to the application
 public class User {
+
     private String Uid;
     private String idUser;
     private Set<Beacon> beacons = new HashSet<Beacon>();
+    private Set<Subscribed> listSubscrive = new HashSet<>();
 
     public User(DataSnapshot dataSnapshot){
         this.Uid = dataSnapshot.getKey();
         this.idUser = (String) dataSnapshot.child("idUser").getValue();
+        Iterable<DataSnapshot> listSnapshots = dataSnapshot.child("Subscribe").getChildren();
+        if (listSnapshots != null){
+            for (DataSnapshot listSnapshot: listSnapshots){
+                this.listSubscrive.add(new Subscribed(listSnapshot));
+            }
+        }
         Iterable<DataSnapshot> beaconSnapshots = dataSnapshot.child("history").getChildren();
         if (beaconSnapshots != null) {
             for (DataSnapshot beaconSnapshot : beaconSnapshots) {
@@ -51,5 +59,13 @@ public class User {
 
     public void setBeacons(Set<Beacon> beacons) {
         this.beacons = beacons;
+    }
+
+    public Set<Subscribed> getListSubscrive() {
+        return listSubscrive;
+    }
+
+    public void setListSubscrive(Set<Subscribed> listSubscrive) {
+        this.listSubscrive = listSubscrive;
     }
 }

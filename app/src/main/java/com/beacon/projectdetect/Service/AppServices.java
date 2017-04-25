@@ -122,7 +122,7 @@ public class AppServices extends Service {
                                 beacon.setActive(false);
                                 beacon.setDepartureTime(visit.getDepartureTimeInMillis());
                                 beacon.setDwellTime(visit.getDwellTimeInMillis());
-                                Map<String, Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons());
+                                Map<String, Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons(),user.getListSubscrive());
                                 firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
                             }
                         }
@@ -167,7 +167,7 @@ public class AppServices extends Service {
                                             }
                                         }
                                         user.getBeacons().add(beacon);
-                                        Map<String,Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons());
+                                        Map<String,Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons(),user.getListSubscrive());
                                         firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
                                     }
                                 }

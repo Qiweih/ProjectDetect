@@ -136,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements  Callback, Projec
             firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
         }
         Intent intent = new Intent(this, AppServices.class);
+        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         startService(intent);
     }
 

@@ -27,6 +27,11 @@
             android:layout_marginRight="@dimen/border_space_min"
             android:layout_alignParentBottom="true">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:id="@+id/header"
+                android:orientation="vertical">
             <TextView
                 android:id="@+id/beacon_id"
                 android:layout_width="match_parent"
@@ -39,10 +44,31 @@
                 tools:text="BeaconId"/>
 
             <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:text="Abonner"
+                    android:id="@+id/subscription"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    style="@style/Widget.AppCompat.Button.Colored"
+                    android:text="Désabonner"
+                    android:id="@+id/subscription_stop"/>
+            </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/beacon_id"
+                android:layout_below="@id/header"
                 android:layout_marginTop="0dp"
                 android:orientation="vertical"
                 android:id="@+id/linear">

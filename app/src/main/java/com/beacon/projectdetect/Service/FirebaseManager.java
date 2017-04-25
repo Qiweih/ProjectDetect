@@ -9,6 +9,7 @@ import com.beacon.projectdetect.module.Beacon;
 import com.beacon.projectdetect.module.BeaconData;
 import com.beacon.projectdetect.module.Member;
 import com.beacon.projectdetect.module.ProjectPlug;
+import com.beacon.projectdetect.module.Subscribed;
 import com.beacon.projectdetect.module.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -135,6 +136,12 @@ public class FirebaseManager {
         return uid;
     }
 
+    // Create a new Beacon key on Firebase
+    public String createNewSubscribeId(User user){
+        String uid = firebaseDatabase.getReference().child("User").child(user.getUid()).child("Subscribe").push().getKey();
+        return uid;
+    }
+
     // Create a new BeaconData key on Firebase
     public String createNewBeaconDataId(BeaconData beaconData) {
         String uid = firebaseDatabase.getReference().child("BeaconData").push().getKey();
@@ -211,7 +218,7 @@ public class FirebaseManager {
     }
 
     // Set the map to update or create a new history on Firebase
-    public Map<String, Object> getMapUpdateBeaconHistory(User user, Set<Beacon> beacons){
+    public Map<String, Object>  getMapUpdateBeaconHistory(User user, Set<Beacon> beacons, Set<Subscribed> listSubscribe){
         Map<String, Object> result = new HashMap<>();
 
         String baseKey = "User/"  + user.getUid() + "/history/";;
@@ -223,6 +230,14 @@ public class FirebaseManager {
             result.put(basekeyBeacon + "departureTime", beacon.getDepartureTime());
             result.put(basekeyBeacon + "visitId", beacon.getVisitId());
             result.put(basekeyBeacon + "beaconIdentifier", beacon.getBeaconIdentifier());
+        }
+
+        String baseKey1 = "User/"  + user.getUid() + "/Subscribe/";;
+
+        for (Subscribed subscribed : listSubscribe){
+            String basekeyBeacon1 = baseKey1  +  subscribed.getUid() + "/";
+            result.put(basekeyBeacon1 + "beaconIdentifier", subscribed.getBeaconIdentifier());
+            result.put(basekeyBeacon1 + "subscribed", subscribed.isSubscribed());
         }
         return result;
     }
