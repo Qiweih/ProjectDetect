@@ -16,7 +16,10 @@ public class BeaconData {
 
     public BeaconData(DataSnapshot dataSnapshot){
         this.uid = (String) dataSnapshot.getKey();
-        this.beaconIdentifier = (String) dataSnapshot.child("beaconIdentifier").getValue();
+        if (dataSnapshot.child("beaconIdentifier").getValue() == null)
+            this.beaconIdentifier = "";
+        else
+            this.beaconIdentifier = (String) dataSnapshot.child("beaconIdentifier").getValue();
         Iterable<DataSnapshot> projectsSnapshot = dataSnapshot.child("ProjectPlug").getChildren();
         if (projectsSnapshot != null) {
             for (DataSnapshot projectSnapshot : projectsSnapshot) {

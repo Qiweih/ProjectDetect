@@ -18,7 +18,10 @@ public class User {
 
     public User(DataSnapshot dataSnapshot){
         this.Uid = dataSnapshot.getKey();
-        this.idUser = (String) dataSnapshot.child("idUser").getValue();
+        if (dataSnapshot.child("idUser").getValue() == null)
+            this.idUser = "";
+        else
+            this.idUser = (String) dataSnapshot.child("idUser").getValue();
         Iterable<DataSnapshot> listSnapshots = dataSnapshot.child("Subscribe").getChildren();
         if (listSnapshots != null){
             for (DataSnapshot listSnapshot: listSnapshots){

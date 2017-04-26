@@ -13,8 +13,14 @@ public class Subscribed {
 
     public Subscribed(DataSnapshot snapshot){
         this.Uid = snapshot.getKey();
-        beaconIdentifier = (String) snapshot.child("beaconIdentifier").getValue();
-        subscribed = (boolean) snapshot.child("subscribed").getValue();
+        if (snapshot.child("beaconIdentifier").getValue() == null)
+            this.beaconIdentifier = "";
+        else
+            beaconIdentifier = (String) snapshot.child("beaconIdentifier").getValue();
+        if (snapshot.child("subscribed").getValue() == null)
+            this.subscribed = false;
+        else
+            subscribed = (boolean) snapshot.child("subscribed").getValue();
     }
 
     public Subscribed(){

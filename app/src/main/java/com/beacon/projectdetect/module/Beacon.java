@@ -18,11 +18,26 @@ public class Beacon {
 
     public Beacon(DataSnapshot dataSnapshot){
         this.uid = dataSnapshot.getKey();
-        this.active = (boolean) dataSnapshot.child("active").getValue();
-        this.dwellTime = (long) dataSnapshot.child("dwellTime").getValue();
-        this.departureTime = (long) dataSnapshot.child("departureTime").getValue();
-        this.visitId = (String) dataSnapshot.child("visitId").getValue();
-        this.beaconIdentifier = (String) dataSnapshot.child("beaconIdentifier").getValue();
+        if(dataSnapshot.child("active").getValue() == null)
+            this.active = false;
+        else
+            this.active = (boolean) dataSnapshot.child("active").getValue();
+        if (dataSnapshot.child("dwellTime").getValue() == null)
+            this.dwellTime = 0;
+        else
+            this.dwellTime = (long) dataSnapshot.child("dwellTime").getValue();
+        if (dataSnapshot.child("departureTime").getValue() == null)
+            this.departureTime = 0;
+        else
+            this.departureTime = (long) dataSnapshot.child("departureTime").getValue();
+        if (dataSnapshot.child("visitId").getValue() == null)
+            this.visitId = "";
+        else
+            this.visitId = (String) dataSnapshot.child("visitId").getValue();
+        if (dataSnapshot.child("beaconIdentifier").getValue() == null)
+            this.beaconIdentifier = "";
+        else
+            this.beaconIdentifier = (String) dataSnapshot.child("beaconIdentifier").getValue();
     }
 
     public Beacon(){

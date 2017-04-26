@@ -18,9 +18,18 @@ public class Member {
 
     public Member(DataSnapshot dataSnapshot){
         this.id = dataSnapshot.getKey();
-        this.name = (String) dataSnapshot.child("name").getValue();
-        this.email = (String) dataSnapshot.child("email").getValue();
-        this.role = (String) dataSnapshot.child("role").getValue();
+        if (dataSnapshot.child("name").getValue() == null)
+            this.name = "";
+        else
+            this.name = (String) dataSnapshot.child("name").getValue();
+        if (dataSnapshot.child("email").getValue() == null)
+            this.email = "";
+        else
+            this.email = (String) dataSnapshot.child("email").getValue();
+        if (dataSnapshot.child("role").getValue() == null)
+            this.role = "";
+        else
+            this.role = (String) dataSnapshot.child("role").getValue();
     }
 
     public Member(){

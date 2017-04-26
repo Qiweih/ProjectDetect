@@ -18,9 +18,18 @@ public class ProjectPlug {
 
     public ProjectPlug(DataSnapshot dataSnapshot){
         this.projectId = dataSnapshot.getKey();
-        this.projectName = (String) dataSnapshot.child("projectName").getValue();
-        this.description = (String) dataSnapshot.child("description").getValue();
-        this.imageName = (String) dataSnapshot.child("imageName").getValue();
+        if (dataSnapshot.child("projectName").getValue() == null)
+            this.projectName = "";
+        else
+            this.projectName = (String) dataSnapshot.child("projectName").getValue();
+        if (dataSnapshot.child("description").getValue() == null)
+            this.description = "";
+        else
+            this.description = (String) dataSnapshot.child("description").getValue();
+        if (dataSnapshot.child("imageName").getValue() == null)
+            this.imageName = "";
+        else
+            this.imageName = (String) dataSnapshot.child("imageName").getValue();
         Iterable<DataSnapshot> membersSnapshot = dataSnapshot.child("member").getChildren();
         if (membersSnapshot != null) {
             for (DataSnapshot memberSnapshot : membersSnapshot) {
