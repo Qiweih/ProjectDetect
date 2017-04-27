@@ -137,17 +137,30 @@ public class AppServices extends Service {
             public void onBeaconSighting(BeaconSighting beaconSighting, List<Visit> list) {
                 super.onBeaconSighting(beaconSighting, list);
                 // If the sighting that we detect is not the same beacon that before, we execute the code below
-                if(!list.isEmpty()){
+                for (User user : firebaseManager.users) {
+                    if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())) {
+                        for (Beacon beacon : user.getBeacons()) {
+                            if (beacon.isActive()) {
+                                for (Visit visit : list) {
+                                    if (visit.getPlace().getName().equals(beaconSighting.getBeacon().getName())) {
+                                        if(beacon.getVisitId().equals("")){
+                                            beacon.setVisitId(visit.getVisitID());
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                     if (!SplashActivity.BeaconId.equals(beaconSighting.getBeacon().getIdentifier())){
-                        if(beaconSighting.getRSSI() > -55){
+                        if(beaconSighting.getRSSI() > -65){
                             for (User user : firebaseManager.users) {
                                 if (user.getIdUser().equals(firebaseManager.getCurrentUser().getUid())) {
+                                    isNewBeacon = true;
                                     for (Beacon beacon : user.getBeacons()){
-                                        for (Visit visit : list){
-                                            if (beacon.getVisitId().equals(visit.getVisitID())){
-                                                if(beacon.isActive()){
-                                                    isNewBeacon = false;
-                                                }
+                                        if(beacon.isActive()){
+                                            if(beacon.getBeaconIdentifier().equals(beaconSighting.getBeacon().getIdentifier())){
+                                                isNewBeacon = false;
                                             }
                                         }
                                     }
@@ -161,11 +174,6 @@ public class AppServices extends Service {
                                         beacon.setUid(firebaseManager.createNewBeaconId(user));
                                         beacon.setActive(true);
                                         beacon.setBeaconIdentifier(beaconSighting.getBeacon().getIdentifier());
-                                        for (Visit visit : list){
-                                            if (visit.getPlace().getName().equals(beaconSighting.getBeacon().getName())){
-                                                beacon.setVisitId(visit.getVisitID());
-                                            }
-                                        }
                                         user.getBeacons().add(beacon);
                                         Map<String,Object> map = firebaseManager.getMapUpdateBeaconHistory(user,user.getBeacons(),user.getListSubscrive());
                                         firebaseManager.getFirebaseDatabase().getReference().updateChildren(map);
@@ -179,7 +187,7 @@ public class AppServices extends Service {
                         }
                     }
                 }
-            }
+
         };
         PlaceManager.getInstance().addListener(placeEventListener);
     }

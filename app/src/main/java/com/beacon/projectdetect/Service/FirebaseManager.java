@@ -230,6 +230,7 @@ public class FirebaseManager {
             result.put(basekeyBeacon + "departureTime", beacon.getDepartureTime());
             result.put(basekeyBeacon + "visitId", beacon.getVisitId());
             result.put(basekeyBeacon + "beaconIdentifier", beacon.getBeaconIdentifier());
+            result.put(basekeyBeacon + "beaconUid", beacon.getUid());
         }
 
         String baseKey1 = "User/"  + user.getUid() + "/Subscribe/";;
