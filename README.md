@@ -15,7 +15,7 @@ if you want this app work on your beacon and Firebase database, you must change 
 this is the firebase database structure : 
 
 ![alt text](https://github.com/Qiweih/ProjectDetect/blob/master/firebase.png)
-![alt text](https://github.com/Qiweih/ProjectDetect/blob/master/firebase1.png)
+![alt text](https://github.com/Qiweih/ProjectDetect/blob/master/firebase2.png)
 
 This app can : 
 
